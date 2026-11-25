@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workout & Nutrition Plan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #0a0a0f;
+            --card-bg: #12121f;
+            --card-border: #2d2d44;
+            --text-primary: #e0e0e0;
+            --text-secondary: #888899;
+            --text-muted: #7f8c8d;
+            --red: #ff4757;
+            --blue: #1e90ff;
+            --green: #2ed573;
+            --orange: #ffa502;
+            --purple: #a55eea;
+            --pink: #ff6b81;
+            --indigo: #5f27cd;
+            --cyan: #00d2d3;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text-primary);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding-bottom: 40px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: linear-gradient(180deg, rgba(18,18,31,0.8) 0%, transparent 100%);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--red);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 1rem;
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 28px;
+            border: 2px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-tab:hover {
+            border-color: var(--red);
+            color: var(--red);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: var(--red);
+            color: white;
+            border-color: var(--red);
+            box-shadow: 0 4px 20px rgba(255, 71, 87, 0.3);
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--red);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Meal Cards */
+        .meal-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: var(--card-bg);
+            border: 2px solid;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .meal-card:hover {
+            transform: translateX(8px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+        }
+
+        .meal-time {
+            min-width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 3px solid white;
+            flex-shrink: 0;
+        }
+
+        .meal-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            border: 2px solid;
+            flex-shrink: 0;
+        }
+
+        .meal-info {
+            flex: 1;
+        }
+
+        .meal-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .meal-items {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .meal-cal {
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 2px solid;
+            white-space: nowrap;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--card-border);
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) {
+            flex-direction: row-reverse;
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-right: 40px;
+            margin-left: 0;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: 40px;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 3px solid white;
+            z-index: 2;
+        }
+
+        .timeline-content {
+            width: 45%;
+            padding: 16px 20px;
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            border-color: var(--red);
+            transform: scale(1.02);
+        }
+
+        .timeline-time {
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* Workout Day Selector */
+        .day-selector {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .day-btn {
+            padding: 10px 20px;
+            border: 2px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .day-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .day-btn.active {
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .day-btn[data-day="0"].active { background: var(--red); border-color: var(--red); }
+        .day-btn[data-day="1"].active { background: var(--blue); border-color: var(--blue); }
+        .day-btn[data-day="2"].active { background: var(--green); border-color: var(--green); }
+        .day-btn[data-day="3"].active { background: var(--red); border-color: var(--red); }
+        .day-btn[data-day="4"].active { background: var(--blue); border-color: var(--blue); }
+        .day-btn[data-day="5"].active { background: var(--green); border-color: var(--green); }
+        .day-btn[data-day="6"].active { background: var(--orange); border-color: var(--orange); }
+
+        .workout-day {
+            display: none;
+        }
+
+        .workout-day.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .workout-header {
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .exercise-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 10px;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .exercise-item:hover {
+            border-color: var(--red);
+        }
+
+        .exercise-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 18px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .exercise-row:hover {
+            transform: translateX(5px);
+            background: #18182d;
+        }
+
+        .exercise-row::after {
+            content: "View Guide →";
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .exercise-row:hover::after {
+            opacity: 1;
+            color: var(--red);
+        }
+
+        .exercise-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: 2px solid;
+            flex-shrink: 0;
+        }
+
+        .exercise-name {
+            flex: 1;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .exercise-sets {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border: 1px solid;
+            white-space: nowrap;
+        }
+
+        .exercise-type {
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: 1px solid;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .workout-icon {
+            font-size: 1rem;
+            line-height: 1;
+        }
+
+        /* Workout Log / Note Bar Under Each Exercise */
+        .exercise-note-box {
+            padding: 10px 18px 14px 66px;
+            border-top: 1px dashed var(--card-border);
+            background: rgba(10, 10, 15, 0.45);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .note-display-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .note-summary {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            font-size: 0.88rem;
+            color: var(--text-secondary);
+        }
+
+        .note-pill {
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .note-pill.kg-pill {
+            color: var(--cyan);
+            border-color: rgba(0, 210, 211, 0.45);
+            background: rgba(0, 210, 211, 0.08);
+        }
+
+        .note-extra-text {
+            color: var(--text-muted);
+            font-style: italic;
+            font-size: 0.84rem;
+        }
+
+        .note-edit-form {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .note-edit-form.active {
+            display: flex;
+        }
+
+        .note-field {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .note-input {
+            background: var(--bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        .note-input:focus {
+            border-color: var(--cyan);
+        }
+
+        .note-input.input-sm {
+            width: 85px;
+        }
+
+        .note-input.input-md {
+            width: 110px;
+        }
+
+        .note-input.input-lg {
+            width: 190px;
+        }
+
+        .note-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .note-btn {
+            padding: 5px 14px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid;
+            background: transparent;
+            transition: all 0.2s ease;
+        }
+
+        .note-btn-edit {
+            color: var(--orange);
+            border-color: var(--orange);
+        }
+
+        .note-btn-edit:hover {
+            background: var(--orange);
+            color: #0a0a0f;
+        }
+
+        .note-btn-save {
+            color: #0a0a0f;
+            background: var(--green);
+            border-color: var(--green);
+        }
+
+        .note-btn-save:hover {
+            filter: brightness(1.1);
+        }
+
+        /* Summary Bar */
+        .summary-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        .summary-item {
+            text-align: center;
+            padding: 16px;
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 12px;
+        }
+
+        .summary-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .summary-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* Principles Grid */
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .principle-card {
+            padding: 20px;
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .principle-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .principle-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 6px;
+        }
+
+        .principle-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .connector {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--card-border);
+            margin: -8px 0;
+        }
+
+        /* MODAL STYLING FOR EXERCISE GUIDES */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-card {
+            background: var(--card-bg);
+            border: 2px solid var(--red);
+            border-radius: 20px;
+            max-width: 650px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.8rem;
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--red);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .modal-meta {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid;
+        }
+
+        .badge-red { color: var(--red); border-color: var(--red); }
+        .badge-blue { color: var(--blue); border-color: var(--blue); }
+
+        .guide-image-container {
+            width: 100%;
+            min-height: 220px;
+            background: #ffffff;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            border: 1px solid var(--card-border);
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .guide-image-container img {
+            max-width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .guide-section {
+            margin-bottom: 18px;
+        }
+
+        .guide-section-title {
+            font-weight: 700;
+            color: var(--red);
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .guide-list {
+            padding-left: 20px;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .guide-list li {
+            margin-bottom: 6px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8rem; }
+            .meal-card { flex-wrap: wrap; }
+            .meal-cal { width: 100%; text-align: center; margin-top: 10px; }
+            .timeline-item, .timeline-item:nth-child(odd) { flex-direction: column; text-align: left; }
+            .timeline-item:nth-child(odd) .timeline-content, .timeline-item:nth-child(even) .timeline-content { margin: 10px 0; width: 90%; }
+            .timeline-line { left: 20px; }
+            .timeline-dot { left: 20px; }
+            .exercise-row { flex-wrap: wrap; }
+            .exercise-sets, .exercise-type { width: 100%; text-align: center; margin-top: 6px; }
+            .exercise-row::after { display: none; }
+            .exercise-note-box { padding: 12px 16px; }
+            .note-input.input-lg { width: 100%; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--red); }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Workout & Nutrition Plan</h1>
+        <p>Push Pull Legs | 6-Day Hypertrophy | Muscle Gain Focus</p>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="nav-tab active" onclick="showSection('meals', event)">Meal Structure</button>
+        <button class="nav-tab" onclick="showSection('flow', event)">Daily Flow</button>
+        <button class="nav-tab" onclick="showSection('workout', event)">Workout Plan</button>
+    </div>
+
+    <!-- MEAL STRUCTURE SECTION -->
+    <div id="meals" class="section active">
+        <div class="card" style="border-color: var(--red); text-align: center;">
+            <div class="card-title" style="justify-content: center; color: var(--red);">
+                <span style="font-size: 1.5rem;">&#127860;</span> NEW MEAL STRUCTURE
+            </div>
+            <p style="color: var(--text-muted);">Daily Nutrition Plan for Muscle Gain ~ 3,000 kcal</p>
+        </div>
+
+        <div class="meal-card" style="border-color: var(--red);">
+            <div class="meal-time" style="background: var(--red); color: white;">8:30 AM</div>
+            <div class="meal-icon" style="border-color: var(--red); color: var(--red);">BRK</div>
+            <div class="meal-info">
+                <div class="meal-name" style="color: var(--red);">BREAKFAST</div>
+                <div class="meal-items">4 Eggs &bull; 2 Toast &bull; Peanut Butter &bull; Milk</div>
+            </div>
+            <div class="meal-cal" style="color: var(--red); border-color: var(--red);">~600 kcal</div>
+        </div>
+        <div class="connector">&#9660;</div>
+
+        <div class="meal-card" style="border-color: var(--orange);">
+            <div class="meal-time" style="background: var(--orange); color: white;">10:30 AM</div>
+            <div class="meal-icon" style="border-color: var(--orange); color: var(--orange);">SNK</div>
+            <div class="meal-info">
+                <div class="meal-name" style="color: var(--orange);">SNACK</div>
+                <div class="meal-items">Banana &bull; Handful of Nuts</div>
+            </div>
+            <div class="meal-cal" style="color: var(--orange); border-color: var(--orange);">~250 kcal</div>
+        </div>
+        <div class="connector">&#9660;</div>
+
+        <div class="meal-card" style="border-color: var(--green);">
+            <div class="meal-time" style="background: var(--green); color: white;">12:00 PM</div>
+            <div class="meal-icon" style="border-color: var(--green); color: var(--green);">LNH</div>
+            <div class="meal-info">
+                <div class="meal-name" style="color: var(--green);">MEAL 2 (LUNCH)</div>
+                <div class="meal-items">Rice &bull; Chicken / Fish &bull; Veggies &bull; Big Portion</div>
+            </div>
+            <div class="meal-cal" style="color: var(--green); border-color: var(--green);">~700 kcal</div>
+        </div>
+        <div class="connector">&#9660;</div>
+
+        <div class="meal-card" style="border-color: var(--blue);">
+            <div class="meal-time" style="background: var(--blue); color: white;">3:00 PM</div>
+            <div class="meal-icon" style="border-color: var(--blue); color: var(--blue);">PWR</div>
+            <div class="meal-info">
+                <div class="meal-name" style="color: var(--blue);">PRE-WORKOUT</div>
+                <div class="meal-items">Oats &bull; Protein Shake &bull; or Yogurt</div>
+            </div>
+            <div class="meal-cal" style="color: var(--blue); border-color: var(--blue);">~350 kcal</div>
+        </div>
+        <div class="connector">&#9660;</div>
+
+        <div class="meal-card" style="border-color: var(--purple);">
+            <div class="meal-time" style="background: var(--purple); color: white;">7:00 PM</div>
+            <div class="meal-icon" style="border-color: var(--purple); color: var(--purple);">DIN</div>
+            <div class="meal-info">
+                <div class="meal-name" style="color: var(--purple);">POST-WORKOUT DINNER</div>
+                <div class="meal-items">Rice / Pasta &bull; Meat &bull; Veggies &bull; Extra Carbs</div>
+            </div>
+            <div class="meal-cal" style="color: var(--purple); border-color: var(--purple);">~800 kcal</div>
+        </div>
+        <div class="connector">&#9660;</div>
+
+        <div class="meal-card" style="border-color: var(--pink);">
+            <div class="meal-time" style="background: var(--pink); color: white;">12:30 AM</div>
+            <div class="meal-icon" style="border-color: var(--pink); color: var(--pink);">BED</div>
+            <div class="meal-info">
+                <div class="meal-name" style="color: var(--pink);">PRE-BED MEAL</div>
+                <div class="meal-items">Casein Shake &bull; Greek Yogurt &bull; Peanut Butter</div>
+            </div>
+            <div class="meal-cal" style="color: var(--pink); border-color: var(--pink);">~300 kcal</div>
+        </div>
+
+        <div class="card" style="border-color: var(--red); text-align: center; margin-top: 24px;">
+            <p style="color: var(--text-muted); font-weight: 600;">TOTAL DAILY INTAKE</p>
+            <p style="color: var(--red); font-size: 1.2rem; font-weight: 700; margin-top: 6px;">~3,000 kcal | High Protein | Muscle Gain Focus</p>
+        </div>
+    </div>
+
+    <!-- DAILY FLOW SECTION -->
+    <div id="flow" class="section">
+        <div class="card" style="border-color: var(--blue); text-align: center;">
+            <div class="card-title" style="justify-content: center; color: var(--blue);">
+                <span style="font-size: 1.5rem;">&#9200;</span> NEW DAILY FLOW
+            </div>
+            <p style="color: var(--text-muted);">Optimized Routine for Muscle Gain & Recovery</p>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-line"></div>
+
+            <div class="timeline-item">
+                <div class="timeline-content" style="border-color: var(--pink);">
+                    <div class="timeline-time" style="color: var(--pink);">8:00 AM</div>
+                    <div class="timeline-title">WAKE UP</div>
+                    <div class="timeline-desc">No more long naps</div>
+                </div>
+                <div class="timeline-dot" style="background: var(--pink);"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content" style="border-color: var(--red);">
+                    <div class="timeline-time" style="color: var(--red);">8:30 AM</div>
+                    <div class="timeline-title">BREAKFAST</div>
+                    <div class="timeline-desc">4 Eggs + Toast + PB + Milk</div>
+                </div>
+                <div class="timeline-dot" style="background: var(--red);"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content" style="border-color: var(--orange);">
+                    <div class="timeline-time" style="color: var(--orange);">9:00 AM - 12:00 PM</div>
+                    <div class="timeline-title">WORK SHIFT 1</div>
+                    <div class="timeline-desc">Morning work session</div>
+                </div>
+                <div class="timeline-dot" style="background: var(--orange);"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content" style="border-color: var(--green);">
+                    <div class="timeline-time" style="color: var(--green);">12:00 PM</div>
+                    <div class="timeline-title">MEAL 2</div>
+                    <div class="timeline-desc">Rice + Chicken + Veggies</div>
+                </div>
+                <div class="timeline-dot" style="background: var(--green);"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content" style="border-color: var(--blue);">
+                    <div class="timeline-time" style="color: var(--blue);">1:00 PM - 3:00 PM</div>
+                    <div class="timeline-title">HOME / RELAX</div>
+                    <div class="timeline-desc">Light rest, NO long nap</div>
+                </div>
+                <div class="timeline-dot" style="background: var(--blue);"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content" style="border-color: var(--purple);">
+                    <div class="timeline-time" style="color: var(--purple);">3:00 PM</div>
+                    <div class="timeline-title">PRE-WORKOUT</div>
+                    <div class="timeline-desc">Oats + Protein Shake</div>
+                </div>
+                <div class="timeline-dot" style="background: var(--purple);"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content" style="border-color: var(--red);">
+                    <div class="timeline-time" style="color: var(--red);">5:00 PM - 6:30 PM</div>
+                    <div class="timeline-title">GYM</div>
+                    <div class="timeline-desc">PPL Workout Split</div>
+                </div>
+                <div class="timeline-dot" style="background: var(--red);"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content" style="border-color: var(--green);">
+                    <div class="timeline-time" style="color: var(--green);">7:00 PM</div>
+                    <div class="timeline-title">DINNER</div>
+                    <div class="timeline-desc">Biggest meal of the day</div>
+                </div>
+                <div class="timeline-dot" style="background: var(--green);"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content" style="border-color: var(--orange);">
+                    <div class="timeline-time" style="color: var(--orange);">8:00 PM - 12:00 AM</div>
+                    <div class="timeline-title">WORK SHIFT 2</div>
+                    <div class="timeline-desc">Evening work session</div>
+                </div>
+                <div class="timeline-dot" style="background: var(--orange);"></div>
+            </div>
+
+            <div class="timeline-item">
+                <div class="timeline-content" style="border-color: var(--indigo);">
+                    <div class="timeline-time" style="color: var(--indigo);">1:00 AM - 8:00 AM</div>
+                    <div class="timeline-title">SLEEP</div>
+                    <div class="timeline-desc">7.5 hours minimum</div>
+                </div>
+                <div class="timeline-dot" style="background: var(--indigo);"></div>
+            </div>
+        </div>
+
+        <div class="principles-grid">
+            <div class="principle-card" style="border-color: var(--indigo);">
+                <div class="principle-title" style="color: var(--indigo);">SLEEP FIX</div>
+                <div class="principle-desc">Eliminate 2.5hr nap &bull; Sleep 1 AM to 8 AM &bull; 7.5 hrs minimum</div>
+            </div>
+            <div class="principle-card" style="border-color: var(--red);">
+                <div class="principle-title" style="color: var(--red);">NUTRITION FIX</div>
+                <div class="principle-desc">Eat within 1hr of waking &bull; 6 meals/day &bull; ~3,000 kcal</div>
+            </div>
+            <div class="principle-card" style="border-color: var(--blue);">
+                <div class="principle-title" style="color: var(--blue);">GYM FIX</div>
+                <div class="principle-desc">Move gym to 5 PM &bull; Pre-workout at 3 PM &bull; PPL 5-6 days/week</div>
+            </div>
+        </div>
+
+        <div class="summary-bar">
+            <div class="summary-item"><div class="summary-label">Age</div><div class="summary-value" style="color: var(--red);">23</div></div>
+            <div class="summary-item"><div class="summary-label">Height</div><div class="summary-value" style="color: var(--orange);">5'10"</div></div>
+            <div class="summary-item"><div class="summary-label">Weight</div><div class="summary-value" style="color: var(--green);">122 lb</div></div>
+            <div class="summary-item"><div class="summary-label">Goal</div><div class="summary-value" style="color: var(--blue);">Muscle Gain</div></div>
+            <div class="summary-item"><div class="summary-label">Target Cal</div><div class="summary-value" style="color: var(--purple);">~3,000</div></div>
+            <div class="summary-item"><div class="summary-label">Sleep</div><div class="summary-value" style="color: var(--indigo);">7.5 hrs</div></div>
+        </div>
+    </div>
+
+    <!-- WORKOUT PLAN SECTION -->
+    <div id="workout" class="section">
+        <div class="card" style="border-color: var(--red); text-align: center;">
+            <div class="card-title" style="justify-content: center; color: var(--red);">
+                <span style="font-size: 1.5rem;">&#127947;</span> PUSH PULL LEGS
+            </div>
+            <p style="color: var(--text-muted);">6-Day Hypertrophy Workout Plan | Click any exercise for full guide</p>
+        </div>
+
+        <div class="day-selector">
+            <button class="day-btn active" data-day="0" onclick="showDay(0)">Mon - Push A</button>
+            <button class="day-btn" data-day="1" onclick="showDay(1)">Tue - Pull A</button>
+            <button class="day-btn" data-day="2" onclick="showDay(2)">Wed - Legs A</button>
+            <button class="day-btn" data-day="3" onclick="showDay(3)">Thu - Push B</button>
+            <button class="day-btn" data-day="4" onclick="showDay(4)">Fri - Pull B</button>
+            <button class="day-btn" data-day="5" onclick="showDay(5)">Sat - Legs B</button>
+            <button class="day-btn" data-day="6" onclick="showDay(6)">Sun - Rest</button>
+        </div>
+
+        <div id="day-0" class="workout-day active">
+            <div class="workout-header" style="background: var(--red);">DAY 1 &mdash; PUSH A (Chest Focus)</div>
+            <div class="exercise-item" data-ex-id="day0-1" data-default-sets="4" data-default-reps="6-8">
+                <div class="exercise-row" onclick="openGuide('Barbell Bench Press', this, 'Strength', 'Chest, Triceps, Front Delts')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">1</div>
+                    <div class="exercise-name">Barbell Bench Press</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">4 sets x 6-8 reps</div>
+                    <div class="exercise-type" style="color: var(--green); border-color: var(--green);"><span class="workout-icon">🏋️</span> Strength</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day0-2" data-default-sets="3" data-default-reps="10-12">
+                <div class="exercise-row" onclick="openGuide('Incline Dumbbell Press', this, 'Hypertrophy', 'Upper Chest, Front Delts, Triceps')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">2</div>
+                    <div class="exercise-name">Incline Dumbbell Press</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">3 sets x 10-12 reps</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day0-3" data-default-sets="3" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Cable Fly (High to Low)', this, 'Isolation', 'Lower & Lower Inner Chest')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">3</div>
+                    <div class="exercise-name">Cable Fly (High to Low)</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">3 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day0-4" data-default-sets="4" data-default-reps="8-10">
+                <div class="exercise-row" onclick="openGuide('Overhead Press (Barbell)', this, 'Strength', 'Front & Side Delts, Upper Chest, Triceps')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">4</div>
+                    <div class="exercise-name">Overhead Press (Barbell)</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">4 sets x 8-10 reps</div>
+                    <div class="exercise-type" style="color: var(--green); border-color: var(--green);"><span class="workout-icon">🏋️</span> Strength</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day0-5" data-default-sets="4" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Lateral Raise (Dumbbell)', this, 'Isolation', 'Side/Lateral Delts')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">5</div>
+                    <div class="exercise-name">Lateral Raise (Dumbbell)</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">4 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day0-6" data-default-sets="4" data-default-reps="10-12">
+                <div class="exercise-row" onclick="openGuide('Tricep Pushdown (Cable)', this, 'Isolation', 'Triceps Lateral & Medial Heads')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">6</div>
+                    <div class="exercise-name">Tricep Pushdown (Cable)</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">4 sets x 10-12 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day0-7" data-default-sets="3" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Overhead Tricep Extension', this, 'Isolation', 'Triceps Long Head')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">7</div>
+                    <div class="exercise-name">Overhead Tricep Extension</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">3 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day-1" class="workout-day">
+            <div class="workout-header" style="background: var(--blue);">DAY 2 &mdash; PULL A (Back Focus)</div>
+            <div class="exercise-item" data-ex-id="day1-1" data-default-sets="3" data-default-reps="5-6">
+                <div class="exercise-row" onclick="openGuide('Deadlift (Conventional)', this, 'Strength', 'Lower Back, Hamstrings, Glutes, Lats, Traps')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">1</div>
+                    <div class="exercise-name">Deadlift (Conventional)</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">3 sets x 5-6 reps</div>
+                    <div class="exercise-type" style="color: var(--green); border-color: var(--green);"><span class="workout-icon">🏋️</span> Strength</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day1-2" data-default-sets="4" data-default-reps="8-10">
+                <div class="exercise-row" onclick="openGuide('Pull-Ups Lat Pulldown', this, 'Hypertrophy', 'Lats, Biceps, Upper Back')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">2</div>
+                    <div class="exercise-name">Pull-Ups / Lat Pulldown</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">4 sets x 8-10 reps</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day1-3" data-default-sets="4" data-default-reps="8-10">
+                <div class="exercise-row" onclick="openGuide('Barbell Row', this, 'Hypertrophy', 'Overall Back Thickness, Lats, Rhomboids')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">3</div>
+                    <div class="exercise-name">Barbell Row</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">4 sets x 8-10 reps</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day1-4" data-default-sets="3" data-default-reps="10-12">
+                <div class="exercise-row" onclick="openGuide('Chest-Supported Row', this, 'Hypertrophy', 'Upper Back, Rhomboids, Rear Delts')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">4</div>
+                    <div class="exercise-name">Chest-Supported Row</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">3 sets x 10-12 reps</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day1-5" data-default-sets="4" data-default-reps="15-20">
+                <div class="exercise-row" onclick="openGuide('Face Pulls', this, 'Isolation', 'Rear Delts, Rotator Cuff, Upper Traps')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">5</div>
+                    <div class="exercise-name">Face Pulls</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">4 sets x 15-20 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day1-6" data-default-sets="4" data-default-reps="10-12">
+                <div class="exercise-row" onclick="openGuide('Barbell Curl', this, 'Isolation', 'Biceps Short & Long Heads')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">6</div>
+                    <div class="exercise-name">Barbell Curl</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">4 sets x 10-12 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day1-7" data-default-sets="3" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Hammer Curl', this, 'Isolation', 'Brachialis, Forearms, Biceps Outer Head')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">7</div>
+                    <div class="exercise-name">Hammer Curl</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">3 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day-2" class="workout-day">
+            <div class="workout-header" style="background: var(--green);">DAY 3 &mdash; LEGS A (Quad Focus)</div>
+            <div class="exercise-item" data-ex-id="day2-1" data-default-sets="4" data-default-reps="6-8">
+                <div class="exercise-row" onclick="openGuide('Barbell Back Squat', this, 'Strength', 'Quadriceps, Glutes, Core')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">1</div>
+                    <div class="exercise-name">Barbell Back Squat</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">4 sets x 6-8 reps</div>
+                    <div class="exercise-type" style="color: var(--green); border-color: var(--green);"><span class="workout-icon">🏋️</span> Strength</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day2-2" data-default-sets="3" data-default-reps="10-12">
+                <div class="exercise-row" onclick="openGuide('Leg Press', this, 'Hypertrophy', 'Quads, Glutes')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">2</div>
+                    <div class="exercise-name">Leg Press</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">3 sets x 10-12 reps</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day2-3" data-default-sets="3" data-default-reps="10 reps/leg">
+                <div class="exercise-row" onclick="openGuide('Bulgarian Split Squat', this, 'Hypertrophy', 'Quads, Glute Medius, Balance')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">3</div>
+                    <div class="exercise-name">Bulgarian Split Squat</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">3 sets x 10 reps/leg</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day2-4" data-default-sets="4" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Leg Extension', this, 'Isolation', 'Quadriceps (Rectus Femoris Focus)')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">4</div>
+                    <div class="exercise-name">Leg Extension</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">4 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day2-5" data-default-sets="4" data-default-reps="10-12">
+                <div class="exercise-row" onclick="openGuide('Lying Leg Curl', this, 'Isolation', 'Hamstrings')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">5</div>
+                    <div class="exercise-name">Lying Leg Curl</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">4 sets x 10-12 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day2-6" data-default-sets="4" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Standing Calf Raise', this, 'Isolation', 'Gastrocnemius (Calves)')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">6</div>
+                    <div class="exercise-name">Standing Calf Raise</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">4 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day2-7" data-default-sets="3" data-default-reps="15-20">
+                <div class="exercise-row" onclick="openGuide('Seated Calf Raise', this, 'Isolation', 'Soleus (Lower Calves)')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">7</div>
+                    <div class="exercise-name">Seated Calf Raise</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">3 sets x 15-20 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day-3" class="workout-day">
+            <div class="workout-header" style="background: var(--red);">DAY 4 &mdash; PUSH B (Shoulder Focus)</div>
+            <div class="exercise-item" data-ex-id="day3-1" data-default-sets="4" data-default-reps="8-10">
+                <div class="exercise-row" onclick="openGuide('Incline Barbell Press', this, 'Strength', 'Upper Chest, Front Delts')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">1</div>
+                    <div class="exercise-name">Incline Barbell Press</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">4 sets x 8-10 reps</div>
+                    <div class="exercise-type" style="color: var(--green); border-color: var(--green);"><span class="workout-icon">🏋️</span> Strength</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day3-2" data-default-sets="3" data-default-reps="10-12">
+                <div class="exercise-row" onclick="openGuide('Flat Dumbbell Press', this, 'Hypertrophy', 'Mid/Lower Chest, Triceps')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">2</div>
+                    <div class="exercise-name">Flat Dumbbell Press</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">3 sets x 10-12 reps</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day3-3" data-default-sets="3" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Pec Deck Fly', this, 'Isolation', 'Inner Chest & Overall Chest')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">3</div>
+                    <div class="exercise-name">Pec Deck Fly</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">3 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day3-4" data-default-sets="4" data-default-reps="8-10">
+                <div class="exercise-row" onclick="openGuide('Seated Dumbbell Press', this, 'Strength', 'Front & Lateral Delts')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">4</div>
+                    <div class="exercise-name">Seated Dumbbell Press</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">4 sets x 8-10 reps</div>
+                    <div class="exercise-type" style="color: var(--green); border-color: var(--green);"><span class="workout-icon">🏋️</span> Strength</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day3-5" data-default-sets="4" data-default-reps="15-20">
+                <div class="exercise-row" onclick="openGuide('Lateral Raise (Cable)', this, 'Isolation', 'Side Delts')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">5</div>
+                    <div class="exercise-name">Lateral Raise (Cable)</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">4 sets x 15-20 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day3-6" data-default-sets="4" data-default-reps="8-10">
+                <div class="exercise-row" onclick="openGuide('Close-Grip Bench Press', this, 'Strength', 'Triceps, Inner Chest')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">6</div>
+                    <div class="exercise-name">Close-Grip Bench Press</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">4 sets x 8-10 reps</div>
+                    <div class="exercise-type" style="color: var(--green); border-color: var(--green);"><span class="workout-icon">🏋️</span> Strength</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day3-7" data-default-sets="3" data-default-reps="10-12">
+                <div class="exercise-row" onclick="openGuide('Skull Crushers', this, 'Isolation', 'Triceps Long & Lateral Heads')">
+                    <div class="exercise-num" style="color: var(--red); border-color: var(--red);">7</div>
+                    <div class="exercise-name">Skull Crushers</div>
+                    <div class="exercise-sets" style="color: var(--red); border-color: var(--red);">3 sets x 10-12 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day-4" class="workout-day">
+            <div class="workout-header" style="background: var(--blue);">DAY 5 &mdash; PULL B (Width Focus)</div>
+            <div class="exercise-item" data-ex-id="day4-1" data-default-sets="3" data-default-reps="5-6">
+                <div class="exercise-row" onclick="openGuide('Rack Pull Block Pull', this, 'Strength', 'Upper/Lower Back, Traps, Glutes')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">1</div>
+                    <div class="exercise-name">Rack Pull / Block Pull</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">3 sets x 5-6 reps</div>
+                    <div class="exercise-type" style="color: var(--green); border-color: var(--green);"><span class="workout-icon">🏋️</span> Strength</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day4-2" data-default-sets="4" data-default-reps="10-12">
+                <div class="exercise-row" onclick="openGuide('Wide-Grip Lat Pulldown', this, 'Hypertrophy', 'Outer Lats (V-Taper)')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">2</div>
+                    <div class="exercise-name">Wide-Grip Lat Pulldown</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">4 sets x 10-12 reps</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day4-3" data-default-sets="4" data-default-reps="10 reps/arm">
+                <div class="exercise-row" onclick="openGuide('Single-Arm Dumbbell Row', this, 'Hypertrophy', 'Lats, Lower Traps')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">3</div>
+                    <div class="exercise-name">Single-Arm Dumbbell Row</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">4 sets x 10 reps/arm</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day4-4" data-default-sets="3" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Seated Cable Row', this, 'Hypertrophy', 'Mid-Back, Rhomboids')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">4</div>
+                    <div class="exercise-name">Seated Cable Row</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">3 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day4-5" data-default-sets="4" data-default-reps="15-20">
+                <div class="exercise-row" onclick="openGuide('Reverse Pec Deck', this, 'Isolation', 'Rear Delts, Upper Back')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">5</div>
+                    <div class="exercise-name">Reverse Pec Deck</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">4 sets x 15-20 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day4-6" data-default-sets="4" data-default-reps="10-12">
+                <div class="exercise-row" onclick="openGuide('Incline Dumbbell Curl', this, 'Isolation', 'Biceps Long Head (Peak)')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">6</div>
+                    <div class="exercise-name">Incline Dumbbell Curl</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">4 sets x 10-12 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day4-7" data-default-sets="3" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Preacher Curl', this, 'Isolation', 'Biceps Short Head')">
+                    <div class="exercise-num" style="color: var(--blue); border-color: var(--blue);">7</div>
+                    <div class="exercise-name">Preacher Curl</div>
+                    <div class="exercise-sets" style="color: var(--blue); border-color: var(--blue);">3 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day-5" class="workout-day">
+            <div class="workout-header" style="background: var(--green);">DAY 6 &mdash; LEGS B (Hamstring/Glute Focus)</div>
+            <div class="exercise-item" data-ex-id="day5-1" data-default-sets="4" data-default-reps="8-10">
+                <div class="exercise-row" onclick="openGuide('Romanian Deadlift', this, 'Strength', 'Hamstrings, Glutes, Erector Spinae')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">1</div>
+                    <div class="exercise-name">Romanian Deadlift</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">4 sets x 8-10 reps</div>
+                    <div class="exercise-type" style="color: var(--green); border-color: var(--green);"><span class="workout-icon">🏋️</span> Strength</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day5-2" data-default-sets="3" data-default-reps="8-10">
+                <div class="exercise-row" onclick="openGuide('Hack Squat Front Squat', this, 'Hypertrophy', 'Quads, Core')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">2</div>
+                    <div class="exercise-name">Hack Squat / Front Squat</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">3 sets x 8-10 reps</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day5-3" data-default-sets="3" data-default-reps="12 reps/leg">
+                <div class="exercise-row" onclick="openGuide('Walking Lunges', this, 'Hypertrophy', 'Glutes, Quads, Hamstrings')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">3</div>
+                    <div class="exercise-name">Walking Lunges</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">3 sets x 12 reps/leg</div>
+                    <div class="exercise-type" style="color: var(--blue); border-color: var(--blue);"><span class="workout-icon">💪</span> Hypertrophy</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day5-4" data-default-sets="4" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Leg Curl (Seated)', this, 'Isolation', 'Hamstrings')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">4</div>
+                    <div class="exercise-name">Leg Curl (Seated)</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">4 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day5-5" data-default-sets="3" data-default-reps="15-20">
+                <div class="exercise-row" onclick="openGuide('Leg Extension', this, 'Isolation', 'Quadriceps')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">5</div>
+                    <div class="exercise-name">Leg Extension</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">3 sets x 15-20 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day5-6" data-default-sets="4" data-default-reps="12-15">
+                <div class="exercise-row" onclick="openGuide('Donkey Calf Raise', this, 'Isolation', 'Calves')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">6</div>
+                    <div class="exercise-name">Donkey Calf Raise</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">4 sets x 12-15 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+            <div class="exercise-item" data-ex-id="day5-7" data-default-sets="3" data-default-reps="15-20">
+                <div class="exercise-row" onclick="openGuide('Tibialis Raise', this, 'Isolation', 'Shin / Anterior Tibialis')">
+                    <div class="exercise-num" style="color: var(--green); border-color: var(--green);">7</div>
+                    <div class="exercise-name">Tibialis Raise</div>
+                    <div class="exercise-sets" style="color: var(--green); border-color: var(--green);">3 sets x 15-20 reps</div>
+                    <div class="exercise-type" style="color: var(--orange); border-color: var(--orange);"><span class="workout-icon">🎯</span> Isolation</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="day-6" class="workout-day">
+            <div class="workout-header" style="background: var(--orange);">DAY 7 &mdash; REST DAY</div>
+            <div class="card" style="text-align: center; border-color: var(--orange);">
+                <p style="color: var(--text-secondary); font-size: 1.1rem;">Recovery is when muscles grow.</p>
+                <p style="color: var(--text-muted); margin-top: 10px;">Light walking, stretching, and eating big today.</p>
+                <p style="color: var(--orange); font-weight: 700; margin-top: 16px;">3-Day Beginner Alternative:</p>
+                <p style="color: var(--text-muted); margin-top: 6px;">Mon (Push) &rarr; Wed (Pull) &rarr; Fri (Legs) &rarr; Rest &rarr; Repeat</p>
+                <p style="color: var(--text-muted); margin-top: 4px;">Use only A versions. Rest: Tue, Thu, Sat, Sun</p>
+            </div>
+        </div>
+
+        <div class="principles-grid">
+            <div class="principle-card" style="border-color: var(--red);">
+                <div class="principle-title" style="color: var(--red);">PROGRESSIVE OVERLOAD</div>
+                <div class="principle-desc">Add weight or reps every week</div>
+            </div>
+            <div class="principle-card" style="border-color: var(--blue);">
+                <div class="principle-title" style="color: var(--blue);">REST 60-90s</div>
+                <div class="principle-desc">Between sets for hypertrophy</div>
+            </div>
+            <div class="principle-card" style="border-color: var(--green);">
+                <div class="principle-title" style="color: var(--green);">TRAIN TO FAILURE</div>
+                <div class="principle-desc">On last 1-2 sets of isolation</div>
+            </div>
+            <div class="principle-card" style="border-color: var(--orange);">
+                <div class="principle-title" style="color: var(--orange);">FORM &gt; EGO</div>
+                <div class="principle-desc">Control the weight, feel the muscle</div>
+            </div>
+            <div class="principle-card" style="border-color: var(--purple);">
+                <div class="principle-title" style="color: var(--purple);">WARM UP</div>
+                <div class="principle-desc">5-10 min light cardio + dynamic stretch</div>
+            </div>
+            <div class="principle-card" style="border-color: var(--pink);">
+                <div class="principle-title" style="color: var(--pink);">POST-WORKOUT</div>
+                <div class="principle-desc">Eat within 30 min after gym</div>
+            </div>
+            <div class="principle-card" style="border-color: var(--indigo);">
+                <div class="principle-title" style="color: var(--indigo);">SLEEP 7.5+ HRS</div>
+                <div class="principle-desc">Muscles grow during recovery</div>
+            </div>
+            <div class="principle-card" style="border-color: var(--cyan);">
+                <div class="principle-title" style="color: var(--cyan);">STAY CONSISTENT</div>
+                <div class="principle-desc">Results take 8-12 weeks minimum</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORKOUT GUIDE MODAL CONTAINER -->
+    <div id="guide-modal" class="modal-overlay" onclick="closeGuideOnOverlay(event)">
+        <div class="modal-card">
+            <button class="modal-close" onclick="closeGuide()">&times;</button>
+            <div class="modal-header">
+                <div class="modal-title" id="m-title">Exercise Title</div>
+                <div class="modal-meta">
+                    <span id="m-sets" class="badge badge-red">Sets/Reps</span>
+                    <span id="m-type" class="badge badge-blue">Type</span>
+                </div>
+            </div>
+            <div class="guide-image-container" id="m-img-container">
+                <img id="m-img" src="" alt="Exercise Guide Diagram" onerror="this.onerror=null; this.src=createSvgPlaceholder(document.getElementById('m-title').innerText);" />
+            </div>
+            <div class="guide-section">
+                <div class="guide-section-title">Target Muscles</div>
+                <p id="m-muscles" style="color: var(--text-secondary); font-size: 0.95rem;">Muscles worked list...</p>
+            </div>
+            <div class="guide-section">
+                <div class="guide-section-title">Step-by-Step Execution</div>
+                <ol id="m-steps" class="guide-list">
+                    <!-- Dynamic execution steps -->
+                </ol>
+            </div>
+            <div class="guide-section">
+                <div class="guide-section-title">Key Form Tips & Cues</div>
+                <ul id="m-tips" class="guide-list">
+                    <!-- Dynamic tips -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showSection(id, e) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            const activeTab = (e && e.target) || (typeof event !== 'undefined' && event.target);
+            if (activeTab) activeTab.classList.add('active');
+        }
+
+        function showDay(dayIndex) {
+            document.querySelectorAll('.workout-day').forEach(d => d.classList.remove('active'));
+            document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('day-' + dayIndex).classList.add('active');
+            document.querySelector('.day-btn[data-day="' + dayIndex + '"]').classList.add('active');
+        }
+
+        /* Workout Log (kg, sets, reps, note) Storage & UI */
+        const STORAGE_KEY = 'workout_tracker_logs_v1';
+
+        function getSavedLogs() {
+            try {
+                return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+            } catch (err) {
+                return {};
+            }
+        }
+
+        function saveLogsToStorage(logs) {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+            } catch (err) {
+                console.error('Could not save workout logs:', err);
+            }
+        }
+
+        function formatSetsRepsLabel(sets, reps) {
+            const s = (sets || '').trim();
+            const r = (reps || '').trim();
+            if (!s && !r) return '';
+            const setsText = s ? `${s} sets` : '';
+            const repsText = r ? (/rep/i.test(r) ? r : `${r} reps`) : '';
+            return [setsText, repsText].filter(Boolean).join(' x ');
+        }
+
+        function renderExerciseNoteUI(itemEl) {
+            const exId = itemEl.getAttribute('data-ex-id');
+            const defaultSets = itemEl.getAttribute('data-default-sets') || '';
+            const defaultReps = itemEl.getAttribute('data-default-reps') || '';
+            const logs = getSavedLogs();
+            const saved = logs[exId] || {
+                sets: defaultSets,
+                reps: defaultReps,
+                kg: '',
+                note: ''
+            };
+
+            const currentSets = saved.sets || defaultSets;
+            const currentReps = saved.reps || defaultReps;
+            const currentKg = saved.kg || '';
+            const currentNote = saved.note || '';
+
+            const setsRepsText = formatSetsRepsLabel(currentSets, currentReps);
+
+            // Keep top badge in sync with saved sets/reps
+            const topSetsBadge = itemEl.querySelector('.exercise-sets');
+            if (topSetsBadge && setsRepsText) {
+                topSetsBadge.textContent = setsRepsText;
+            }
+
+            let noteBox = itemEl.querySelector('.exercise-note-box');
+            if (!noteBox) {
+                noteBox = document.createElement('div');
+                noteBox.className = 'exercise-note-box';
+                noteBox.addEventListener('click', (e) => e.stopPropagation());
+                itemEl.appendChild(noteBox);
+            }
+
+            const kgBadgeHtml = currentKg
+                ? `<span class="note-pill kg-pill">${escapeHtml(currentKg)} kg</span>`
+                : `<span class="note-pill" style="color: var(--text-muted);">No kg logged</span>`;
+
+            const extraNoteHtml = currentNote
+                ? `<span class="note-extra-text">• Note: ${escapeHtml(currentNote)}</span>`
+                : '';
+
+            noteBox.innerHTML = `
+                <div class="note-display-bar">
+                    <div class="note-summary">
+                        <span class="note-pill">${escapeHtml(setsRepsText)}</span>
+                        ${kgBadgeHtml}
+                        ${extraNoteHtml}
+                    </div>
+                    <div class="note-actions">
+                        <button type="button" class="note-btn note-btn-edit" onclick="toggleEditNote(event, '${exId}', true)">Edit</button>
+                    </div>
+                </div>
+                <div class="note-edit-form" id="edit-form-${exId}">
+                    <label class="note-field">
+                        Sets:
+                        <input type="text" class="note-input input-sm" id="input-sets-${exId}" value="${escapeAttr(currentSets)}" placeholder="e.g. 4">
+                    </label>
+                    <label class="note-field">
+                        Reps:
+                        <input type="text" class="note-input input-md" id="input-reps-${exId}" value="${escapeAttr(currentReps)}" placeholder="e.g. 6-8">
+                    </label>
+                    <label class="note-field">
+                        Weight (kg):
+                        <input type="text" class="note-input input-sm" id="input-kg-${exId}" value="${escapeAttr(currentKg)}" placeholder="e.g. 35">
+                    </label>
+                    <label class="note-field">
+                        Note:
+                        <input type="text" class="note-input input-lg" id="input-note-${exId}" value="${escapeAttr(currentNote)}" placeholder="Optional note...">
+                    </label>
+                    <div class="note-actions">
+                        <button type="button" class="note-btn note-btn-save" onclick="saveExerciseNote(event, '${exId}')">Save</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleEditNote(e, exId, isEditing) {
+            if (e) e.stopPropagation();
+            const form = document.getElementById(`edit-form-${exId}`);
+            if (!form) return;
+            if (isEditing) {
+                form.classList.add('active');
+                const kgInput = document.getElementById(`input-kg-${exId}`);
+                if (kgInput) kgInput.focus();
+            } else {
+                form.classList.remove('active');
+            }
+        }
+
+        function saveExerciseNote(e, exId) {
+            if (e) e.stopPropagation();
+            const itemEl = document.querySelector(`.exercise-item[data-ex-id="${exId}"]`);
+            if (!itemEl) return;
+
+            const defaultSets = itemEl.getAttribute('data-default-sets') || '';
+            const defaultReps = itemEl.getAttribute('data-default-reps') || '';
+
+            const setsVal = (document.getElementById(`input-sets-${exId}`).value || '').trim() || defaultSets;
+            const repsVal = (document.getElementById(`input-reps-${exId}`).value || '').trim() || defaultReps;
+            const kgVal = (document.getElementById(`input-kg-${exId}`).value || '').trim().replace(/\s*kg$/i, '');
+            const noteVal = (document.getElementById(`input-note-${exId}`).value || '').trim();
+
+            const logs = getSavedLogs();
+            logs[exId] = {
+                sets: setsVal,
+                reps: repsVal,
+                kg: kgVal,
+                note: noteVal
+            };
+            saveLogsToStorage(logs);
+            renderExerciseNoteUI(itemEl);
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function escapeAttr(str) {
+            return escapeHtml(str);
+        }
+
+        function initWorkoutNotes() {
+            document.querySelectorAll('.exercise-item').forEach(item => {
+                renderExerciseNoteUI(item);
+            });
+        }
+
+        /* SVG Fallback generator if a local image file is missing */
+        function createSvgPlaceholder(title) {
+            const encodedTitle = encodeURIComponent(title);
+            return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="250" viewBox="0 0 600 250"><rect width="100%" height="100%" fill="%231a1a2e"/><text x="50%" y="45%" dominant-baseline="middle" text-anchor="middle" fill="%23ff4757" font-family="sans-serif" font-size="20" font-weight="bold">${encodedTitle}</text><text x="50%" y="65%" dominant-baseline="middle" text-anchor="middle" fill="%23888899" font-family="sans-serif" font-size="14">Place image file "${encodedTitle}.jpg" in root folder</text></svg>`;
+        }
+
+        /* Exercise Guide Details Database */
+        const exerciseGuides = {
+            "Barbell Bench Press": {
+                steps: [
+                    "Lie flat on the bench with feet firmly planted on the ground.",
+                    "Grip the bar slightly wider than shoulder-width with wrists straight.",
+                    "Unrack the bar, lower it steadily down to mid-chest under full control.",
+                    "Press explosively back up to the starting position without locking out elbows aggressively."
+                ],
+                tips: [
+                    "Keep your shoulder blades pulled back and down into the bench throughout.",
+                    "Maintain a natural arch in your lower back.",
+                    "Inhale on the way down, exhale as you press."
+                ]
+            },
+            "Incline Dumbbell Press": {
+                steps: [
+                    "Set the bench to a 30° to 45° incline angle.",
+                    "Sit with dumbbells rested on your thighs, then kick them up to shoulder level as you lie back.",
+                    "Press the dumbbells upward and slightly inward toward each other.",
+                    "Lower under control until you feel a deep stretch in your upper chest."
+                ],
+                tips: [
+                    "Avoid setting the incline too high (above 45°) to prevent front delts from taking over.",
+                    "Keep elbows angled around 45° from your torso, not flared out straight."
+                ]
+            },
+            "Cable Fly (High to Low)": {
+                steps: [
+                    "Set cable pulleys above head height and attach D-handles.",
+                    "Take a step forward with one foot for stability, maintaining a slight forward torso lean.",
+                    "Pull handles down and together in an arching motion until hands meet in front of lower torso.",
+                    "Slowly let arms return back up for a strong chest stretch."
+                ],
+                tips: [
+                    "Keep a slight bend in your elbows; don't bend or extend arms mid-rep.",
+                    "Focus on squeezing lower chest at the bottom of the movement."
+                ]
+            },
+            "Overhead Press (Barbell)": {
+                steps: [
+                    "Stand upright with feet hip-width apart, holding barbell at upper chest/collarbone level.",
+                    "Brace your core and glutes tight.",
+                    "Press the bar overhead in a straight line, leaning slightly back to let it pass your chin.",
+                    "Push your head forward slightly once the bar passes your head."
+                ],
+                tips: [
+                    "Do not arch your lower back excessively; use your abs to stay rigid.",
+                    "Squeeze your glutes tightly for stability."
+                ]
+            },
+            "Lateral Raise (Dumbbell)": {
+                steps: [
+                    "Stand with dumbbells at your sides, knees slightly bent.",
+                    "Lead with your elbows and raise the weights out to your sides until parallel with shoulder height.",
+                    "Pause briefly at the top, then lower with a controlled 2-second negative."
+                ],
+                tips: [
+                    "Pour the pitcher: keep pinkies slightly higher than thumbs.",
+                    "Avoid swinging your torso to lift the weight."
+                ]
+            },
+            "Tricep Pushdown (Cable)": {
+                steps: [
+                    "Attach a rope or straight bar to a high cable pulley.",
+                    "Keep your elbows pinned tight to your ribs throughout.",
+                    "Extend your arms downward fully by locking out your triceps at the bottom.",
+                    "Return slowly until your forearms reach chest level."
+                ],
+                tips: [
+                    "Do not let your shoulders roll forward or elbows swing back and forth.",
+                    "Spread the rope apart at the bottom for maximum tricep contraction."
+                ]
+            },
+            "Overhead Tricep Extension": {
+                steps: [
+                    "Hold a dumbbell or cable attachment overhead with both hands.",
+                    "Lower the weight behind your head by bending only at your elbows.",
+                    "Get a deep stretch in your triceps, then extend arms upward to the starting point."
+                ],
+                tips: [
+                    "Keep your upper arms stationary close to your ears.",
+                    "Ensure you don't overarch your lower spine."
+                ]
+            },
+            "Deadlift (Conventional)": {
+                steps: [
+                    "Stand with feet shoulder-width, bar over mid-foot.",
+                    "Bend at hips and knees, grip bar just outside knees.",
+                    "Keep spine neutral, pull shoulders back, drive feet into the ground to lift.",
+                    "Stand tall at the top without hyper-extending lower back."
+                ],
+                tips: [
+                    "Engage lats by trying to 'break the bar'.",
+                    "Keep the bar glued close to your shins and thighs throughout."
+                ]
+            },
+            "Barbell Back Squat": {
+                steps: [
+                    "Rest the bar securely on upper back/traps.",
+                    "Unrack, step back, set feet slightly wider than shoulder-width, toes angled outward.",
+                    "Break at hips and knees simultaneously to lower thighs parallel or below parallel.",
+                    "Drive through whole foot to stand back up."
+                ],
+                tips: [
+                    "Keep knees tracking in line with your toes.",
+                    "Maintain a chest-up posture throughout the rep."
+                ]
+            },
+            "Romanian Deadlift": {
+                steps: [
+                    "Stand tall holding barbell with overhand grip.",
+                    "Push hips back into a hinge while maintaining a flat spine and micro-bend in knees.",
+                    "Lower bar down along thighs until a strong stretch is felt in hamstrings.",
+                    "Drive hips forward to return to standing."
+                ],
+                tips: [
+                    "Movement comes from hip hinge, not knee bending.",
+                    "Stop lowering when your hips stop moving backward."
+                ]
+            }
+        };
+
+        function openGuide(title, setsOrRowEl, type, muscles) {
+            let setsText = setsOrRowEl;
+            let kgSuffix = '';
+            if (setsOrRowEl && typeof setsOrRowEl === 'object') {
+                const badgeEl = setsOrRowEl.querySelector('.exercise-sets');
+                setsText = badgeEl ? badgeEl.innerText : '';
+                const itemEl = setsOrRowEl.closest('.exercise-item');
+                if (itemEl) {
+                    const exId = itemEl.getAttribute('data-ex-id');
+                    const saved = getSavedLogs()[exId];
+                    if (saved && saved.kg) {
+                        kgSuffix = ` (${saved.kg} kg)`;
+                    }
+                }
+            }
+
+            document.getElementById('m-title').innerText = title;
+            document.getElementById('m-sets').innerText = setsText + kgSuffix;
+            document.getElementById('m-type').innerText = type;
+            document.getElementById('m-muscles').innerText = muscles;
+
+            /* Set the image file name dynamically based on the exercise title */
+            const imgElement = document.getElementById('m-img');
+            imgElement.src = title + ".jpg";
+
+            const guide = exerciseGuides[title] || {
+                steps: [
+                    "Set up exercise equipment with proper weight selection.",
+                    "Perform the exercise through a full range of motion.",
+                    "Focus on mind-muscle connection and control the eccentric phase."
+                ],
+                tips: [
+                    "Maintain proper spinal alignment.",
+                    "Breathe out during exertion, in during return phase."
+                ]
+            };
+
+            const stepsContainer = document.getElementById('m-steps');
+            stepsContainer.innerHTML = guide.steps.map(step => `<li>${step}</li>`).join('');
+
+            const tipsContainer = document.getElementById('m-tips');
+            tipsContainer.innerHTML = guide.tips.map(tip => `<li>${tip}</li>`).join('');
+
+            document.getElementById('guide-modal').classList.add('active');
+        }
+
+        function closeGuide() {
+            document.getElementById('guide-modal').classList.remove('active');
+        }
+
+        function closeGuideOnOverlay(e) {
+            if (e.target.id === 'guide-modal') {
+                closeGuide();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initWorkoutNotes);
+    </script>
+</body>
+</html>
